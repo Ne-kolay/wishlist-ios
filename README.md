@@ -32,4 +32,4 @@ This is an iOS application for managing a user's wishlist. Users can create and 
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is not licensed yet.
