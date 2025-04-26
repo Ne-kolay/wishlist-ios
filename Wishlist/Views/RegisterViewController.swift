@@ -34,6 +34,7 @@ class RegisterViewController: UIViewController {
         emailTextField = UITextField()
         emailTextField.placeholder = "Email"
         emailTextField.borderStyle = .roundedRect
+        emailTextField.keyboardType = .emailAddress
         emailTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(emailTextField)
         
@@ -65,15 +66,15 @@ class RegisterViewController: UIViewController {
     
     // MARK: - Register Button Action
     @objc func registerTapped() {
-        // Получаем данные из текстовых полей
-        guard let username = usernameTextField.text,
-              let password = passwordTextField.text,
-              let email = emailTextField.text else {
-            print("Заполните все поля!")
+        // Получаем данные из текстовых полей и убираем пробелы по краям
+        guard let username = usernameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              let password = passwordTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              let email = emailTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !username.isEmpty, !password.isEmpty, !email.isEmpty else {
+            print("❌ Все поля должны быть заполнены!")
             return
         }
-        
-        // Отправляем запрос на сервер для регистрации
+
         registerUser(username: username, password: password, email: email)
     }
     

@@ -30,6 +30,15 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    // Кнопка регистрации
+    private let registerButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle("Зарегистрироваться", for: .normal)
+        button.setTitleColor(.systemBlue, for: .normal)
+        button.addTarget(self, action: #selector(registerTapped), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -37,7 +46,7 @@ class LoginViewController: UIViewController {
     }
     
     private func setupUI() {
-        [emailTextField, passwordTextField, loginButton].forEach {
+        [emailTextField, passwordTextField, loginButton, registerButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)
         }
@@ -56,7 +65,10 @@ class LoginViewController: UIViewController {
             loginButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             loginButton.topAnchor.constraint(equalTo: passwordTextField.bottomAnchor, constant: 30),
             loginButton.widthAnchor.constraint(equalTo: emailTextField.widthAnchor),
-            loginButton.heightAnchor.constraint(equalToConstant: 44)
+            loginButton.heightAnchor.constraint(equalToConstant: 44),
+            
+            registerButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            registerButton.topAnchor.constraint(equalTo: loginButton.bottomAnchor, constant: 15)
         ])
     }
     
@@ -106,13 +118,9 @@ class LoginViewController: UIViewController {
                     DispatchQueue.main.async {
                         if result.valid {
                             print("✅ Логин успешен!")
+                            AuthManager.shared.saveUserEmail(email)
                             
-                            // Сохраняем email пользователя в AuthManager
-                            let authManager = AuthManager()
-                            authManager.saveUserEmail(email)
-                            
-                            // Переход на главный экран после успешного логина
-                            let mainVC = DashboardViewController() // или любой другой основной экран
+                            let mainVC = DashboardViewController()
                             self.navigationController?.pushViewController(mainVC, animated: true)
                         } else {
                             print("❌ Неверный пароль")
@@ -125,5 +133,10 @@ class LoginViewController: UIViewController {
         }
         
         task.resume()
+    }
+    
+    @objc private func registerTapped() {
+        let registerVC = RegisterViewController() // Предполагаем, что он у тебя уже есть или будет
+        self.navigationController?.pushViewController(registerVC, animated: true)
     }
 }

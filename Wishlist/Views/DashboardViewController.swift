@@ -1,7 +1,7 @@
 import UIKit
 
 class DashboardViewController: UIViewController {
-
+    
     // MARK: - UI Elements
     private let welcomeLabel: UILabel = {
         let label = UILabel()
@@ -45,6 +45,9 @@ class DashboardViewController: UIViewController {
         return button
     }()
     
+    // MARK: - Properties
+    private var userId: Int? // Здесь мы будем хранить userId
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,6 +55,9 @@ class DashboardViewController: UIViewController {
         // Set up the UI
         view.backgroundColor = .white
         setupUI()
+        
+        // Получаем userId через AuthManager
+        fetchUserId()
     }
     
     // MARK: - Setup UI
@@ -84,9 +90,29 @@ class DashboardViewController: UIViewController {
         ])
     }
     
+    // MARK: - Fetch User ID
+    private func fetchUserId() {
+        AuthManager.shared.getUserIdFromServer { [weak self] userId in
+            guard let self = self else { return }
+            
+            if let userId = userId {
+                self.userId = userId
+            } else {
+                print("Не удалось получить userId")
+            }
+        }
+    }
+    
     // MARK: - Navigation Actions
     @objc private func navigateToWishlistList() {
-        let wishlistListVC = WishlistListViewController() // Экран списка вишлистов
+        guard let userId = userId else {
+            print("Не удалось найти userId")
+            return
+        }
+        print("Получен userId: \(userId)")
+        
+        let wishlistListVC = WishlistListsViewController()
+        wishlistListVC.userId = userId // Передаем userId в следующий экран
         navigationController?.pushViewController(wishlistListVC, animated: true)
     }
     
@@ -103,8 +129,7 @@ class DashboardViewController: UIViewController {
     // MARK: - Logout Action
     @objc private func logoutTapped() {
         // Очистить информацию о пользователе
-        let authManager = AuthManager()
-        authManager.logout()
+        AuthManager.shared.logout()
         
         // Вернуться на экран логина
         if let sceneDelegate = view.window?.windowScene?.delegate as? SceneDelegate {

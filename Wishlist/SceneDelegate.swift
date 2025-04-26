@@ -14,8 +14,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let window = UIWindow(windowScene: windowScene)
         
         // Проверяем, залогинен ли пользователь
-        let authManager = AuthManager()
-        if let userEmail = authManager.getUserEmail(), !userEmail.isEmpty {
+        if let userEmail = AuthManager.shared.getUserEmail(), !userEmail.isEmpty {
             // Если пользователь залогинен, открываем Dashboard
             let dashboardVC = DashboardViewController()  // или ваш главный экран
             window.rootViewController = UINavigationController(rootViewController: dashboardVC)
